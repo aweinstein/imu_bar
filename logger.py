@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import time
@@ -15,13 +16,19 @@ def save_data(lines):
 
 if __name__ == '__main__':
 
-    port = '/dev/ttyACM0'
+    port = '/dev/ttyACM0' if os.name == 'posix' else 'COM1'
+    parser = argparse.ArgumentParser(description='IMU & Barometer Logger')
+    parser.add_argument('-p', '--port', action='store', default=port,
+                        help='Server address')
+    args = parser.parse_args()
+    port = args.port
     bauds = 115200
     try:
         ser = serial.Serial(port, bauds, timeout=5.0)
     except serial.SerialException, e:
         print 'Error opening serial port:', e
         sys.exit(-1)
+    print 'Connected to port %s at %d bauds' % (port, bauds)
     print 'Waiting for start of stream'
     lines = []
     n = 0
