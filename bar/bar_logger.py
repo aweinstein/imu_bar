@@ -1,3 +1,5 @@
+import argparse
+import os
 import time
 
 import numpy as np
@@ -60,7 +62,13 @@ def plot_data(t, p, alt, t_filt=[], p_filt=[], alt_filt=[], ups=[], uts=[]):
         a3.set_ylim(min(alts) - 1, max(alts) + 1)
 
 if __name__ == '__main__':
-    port = '/dev/ttyACM0'
+    port = '/dev/ttyACM0' if os.name == 'posix' else 'COM1'
+    parser = argparse.ArgumentParser(description='Barometer Logger')
+    parser.add_argument('-p', '--port', action='store', default=port,
+                        help='Server address')
+    args = parser.parse_args()
+    port = args.port
+
     bauds = 115200
     ser = serial.Serial(port, bauds)
     temps, press =  [], []
