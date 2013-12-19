@@ -149,6 +149,13 @@ void loop()
     Serial.print(MPU.m_rawGyro[VEC3_Z]);
     Serial.print(',');
   
+    Serial.print(MPU.m_rawMag[VEC3_X]);
+    Serial.print(',');
+    Serial.print(MPU.m_rawMag[VEC3_Y]);
+    Serial.print(',');
+    Serial.print(MPU.m_rawMag[VEC3_Z]);
+    Serial.print(',');
+    
     Serial.print(temperature);  
     Serial.print(',');
     Serial.print(pressure);  

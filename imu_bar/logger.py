@@ -14,6 +14,11 @@ def save_data(lines):
         f.write('\n')
     print 'Data saved in', file_name
 
+def reset():
+    ser.setDTR(False)
+    time.sleep(0.1)
+    ser.setDTR(True)
+
 if __name__ == '__main__':
 
     port = '/dev/ttyACM0' if os.name == 'posix' else 'COM1'
@@ -28,6 +33,7 @@ if __name__ == '__main__':
     except serial.SerialException, e:
         print 'Error opening serial port:', e
         sys.exit(-1)
+    reset()
     print 'Connected to port %s at %d bauds' % (port, bauds)
     print 'Waiting for start of stream'
     lines = []
@@ -43,17 +49,14 @@ if __name__ == '__main__':
                 break
             if len(line) == 0 or line[-1] != '\n':
                 print 'Timeout!, restarting...'
-                ser.setDTR(False)
-                time.sleep(0.1)
-                ser.setDTR(True)
-
+                reset()
         while True:
-            line = ser.readline()
+            line = ser.readline().strip()
             ts = time.time()
-            lines.append('%f,%s' % (ts, line.strip()))
+            lines.append('%f,%s' % (ts, line))
             n += 1
             if (n % 50) == 0:
-                print 'Added %d measurements' % (len(lines) - last_len)
+                print 'time: %.2f %s' % ((ts - start), line)
                 last_len = len(lines)
     except KeyboardInterrupt:
         end = time.time()
